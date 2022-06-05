@@ -5,7 +5,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class BaseConfig:
-    SECRET_KEY = "you-will-never-guess"
+    SECRET_KEY = os.getenv('SECRET_KEY', 'you-will-never-guess')
     JSON_AS_ASCII = False
 
     ITEMS_PER_PAGE = 12
@@ -17,6 +17,10 @@ class BaseConfig:
 
     PWD_HASH_SALT = base64.b64decode("salt")
     PWD_HASH_ITERATIONS = 100_000
+
+    RESTX_JSON = {
+        'ensure_ascii': False,
+    }
 
 
 class TestingConfig(BaseConfig):

@@ -1,8 +1,9 @@
 import pytest
 
 from project.config import TestingConfig
+from project.models import Genre
 from project.server import create_app
-from project.setup_db import db as database
+from project.setup.db import db as database
 
 
 @pytest.fixture
@@ -28,3 +29,11 @@ def db(app):
 def client(app, db):
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def genre(db):
+    obj = Genre(name="genre")
+    db.session.add(obj)
+    db.session.commit()
+    return obj

@@ -1,20 +1,34 @@
+import json
+import os
+from contextlib import suppress
+from typing import Any, Dict, List, Type
+
 from sqlalchemy.exc import IntegrityError
 
-from project.config import DevelopmentConfig
-from project.dao.models import Genre
+from project.models import Genre
 from project.server import create_app
-from project.setup_db import db
-from project.utils import read_json
+from project.setup.db import db, models
 
-app = create_app(DevelopmentConfig)
+app = create_app(os.getenv("FLASK_ENV", "development"))
 
-data = read_json("fixtures.json")
 
-with app.app_context():
-    for genre in data["genres"]:
-        db.session.add(Genre(id=genre["pk"], name=genre["name"]))
+def read_json(filename: str, encoding: str = 'utf-8'):
+    with open(filename, encoding=encoding) as f:
+        return json.load(f)
 
-    try:
-        db.session.commit()
-    except IntegrityError:
-        print("Fixtures already loaded")
+
+def load_data(data: List[Dict[str, Any]], model: Type[models.Base]) -> None:
+    for item in data:
+        item['id'] = item.pop('pk')
+        db.session.add(model(**item))
+
+
+if __name__ == '__main__':
+    data: Dict[str, List[Dict[str, Any]]] = read_json("fixtures.json")
+
+    with app.app_context():
+        # TODO: [fixtures] Добавить модели Directors и Movies
+        load_data(data['genres'], Genre)
+
+        with suppress(IntegrityError):
+            db.session.commit()

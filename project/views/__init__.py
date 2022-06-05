@@ -1,5 +1,8 @@
-from .genres import genres_ns
+from .auth import auth_ns, user_ns
+from .main import genres_ns
 
 __all__ = [
-    "genres_ns",
+    'auth_ns',
+    'genres_ns',
+    'user_ns',
 ]
