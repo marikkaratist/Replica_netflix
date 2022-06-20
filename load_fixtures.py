@@ -1,20 +1,13 @@
-import json
-import os
 from contextlib import suppress
 from typing import Any, Dict, List, Type
 
 from sqlalchemy.exc import IntegrityError
 
+from project.config import config
 from project.models import Genre
 from project.server import create_app
 from project.setup.db import db, models
-
-app = create_app(os.getenv("FLASK_ENV", "development"))
-
-
-def read_json(filename: str, encoding: str = 'utf-8'):
-    with open(filename, encoding=encoding) as f:
-        return json.load(f)
+from project.utils import read_json
 
 
 def load_data(data: List[Dict[str, Any]], model: Type[models.Base]) -> None:
@@ -24,11 +17,13 @@ def load_data(data: List[Dict[str, Any]], model: Type[models.Base]) -> None:
 
 
 if __name__ == '__main__':
-    data: Dict[str, List[Dict[str, Any]]] = read_json("fixtures.json")
+    fixtures: Dict[str, List[Dict[str, Any]]] = read_json("fixtures.json")
+
+    app = create_app(config)
 
     with app.app_context():
         # TODO: [fixtures] Добавить модели Directors и Movies
-        load_data(data['genres'], Genre)
+        load_data(fixtures['genres'], Genre)
 
         with suppress(IntegrityError):
             db.session.commit()
