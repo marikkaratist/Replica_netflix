@@ -1,10 +1,7 @@
-from project.config import DevelopmentConfig
-from project.dao.models import *  # noqa F401, F403
+from project.config import config
 from project.server import create_app
-from project.setup_db import db
+from project.setup.db import db
 
-app = create_app(DevelopmentConfig)
-
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+if __name__ == '__main__':
+    with create_app(config).app_context():
+        db.create_all()

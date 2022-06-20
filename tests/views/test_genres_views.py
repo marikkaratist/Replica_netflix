@@ -1,41 +1,34 @@
 import pytest
 
-from project.dao.models import Genre
+from project.models import Genre
 
 
 class TestGenresView:
-    url = "/genres/"
-
     @pytest.fixture
     def genre(self, db):
-        g = Genre(name="Боевик")
-        db.session.add(g)
+        obj = Genre(name="genre")
+        db.session.add(obj)
         db.session.commit()
-        return g
+        return obj
 
-    def test_get_genres(self, client, genre):
-        response = client.get(self.url)
+    def test_many(self, client, genre):
+        response = client.get("/genres/")
         assert response.status_code == 200
-        assert response.json == [
-            {"id": genre.id, "name": genre.name},
-        ]
+        assert response.json == [{"id": genre.id, "name": genre.name}]
 
+    def test_genre_pages(self, client, genre):
+        response = client.get("/genres/?page=1")
+        assert response.status_code == 200
+        assert len(response.json) == 1
 
-class TestGenreView:
-    url = "/genres/{genre_id}"
+        response = client.get("/genres/?page=2")
+        assert response.status_code == 404
 
-    @pytest.fixture
-    def genre(self, db):
-        g = Genre(name="Боевик")
-        db.session.add(g)
-        db.session.commit()
-        return g
-
-    def test_get_genre(self, client, genre):
-        response = client.get(self.url.format(genre_id=genre.id))
+    def test_genre(self, client, genre):
+        response = client.get("/genres/1/")
         assert response.status_code == 200
         assert response.json == {"id": genre.id, "name": genre.name}
 
-    def test_genre_not_found(self, client):
-        response = client.get(self.url.format(genre_id=1))
+    def test_genre_not_found(self, client, genre):
+        response = client.get("/genres/2/")
         assert response.status_code == 404
