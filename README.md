@@ -4,16 +4,18 @@
 - Установка зависимостей
 ```shell
 pip install -r requirements.txt
+
+pip install -r requirements.dev.txt
 ```
 
 - Создание моделей (очистит БД и создаст все модели, указанные в импорте)
 ```shell
-python create_tables
+python create_tables.py
 ```
 
 - Загрузка данных в базу
 ```shell
-python load_fixture
+python load_fixture.py
 ```
 Скрпит читает файл fixtures.json и загружает данные в базу. Если данные уже загружены - выводит соответсвующее сообщение. 
 

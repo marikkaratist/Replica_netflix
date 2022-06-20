@@ -50,6 +50,8 @@ class ConfigFactory:
             return DevelopmentConfig
         elif cls.flask_env == 'production':
             return ProductionConfig
+        elif cls.flask_env == 'testing':
+            return TestingConfig
         raise NotImplementedError
 
 

@@ -1,4 +1,16 @@
+import pytest
+
+from project.models import Genre
+
+
 class TestGenresView:
+    @pytest.fixture
+    def genre(self, db):
+        obj = Genre(name="genre")
+        db.session.add(obj)
+        db.session.commit()
+        return obj
+
     def test_many(self, client, genre):
         response = client.get("/genres/")
         assert response.status_code == 200

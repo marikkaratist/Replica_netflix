@@ -1,8 +1,9 @@
 import pytest
 
 from project.config import TestingConfig
-from project.models import Genre
+from project.dao import GenreDAO
 from project.server import create_app
+from project.services import GenresService
 from project.setup.db import db as database
 
 
@@ -22,7 +23,7 @@ def db(app):
 
     yield database
 
-    database.session.rollback()
+    database.session.close()
 
 
 @pytest.fixture
@@ -32,8 +33,10 @@ def client(app, db):
 
 
 @pytest.fixture
-def genre(db):
-    obj = Genre(name="genre")
-    db.session.add(obj)
-    db.session.commit()
-    return obj
+def genres_dao(db):
+    return GenreDAO(db.session)
+
+
+@pytest.fixture
+def genres_service(genres_dao):
+    return GenresService(genres_dao)
