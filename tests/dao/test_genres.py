@@ -1,6 +1,5 @@
 import pytest
 
-from project.config import config
 from project.dao import GenresDAO
 from project.models import Genre
 
