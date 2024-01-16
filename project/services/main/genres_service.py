@@ -16,3 +16,13 @@ class GenresService:
 
     def get_all(self, page: Optional[int] = None) -> list[Genre]:
         return self.dao.get_all(page=page)
+
+    def create(self, genre_d):
+        return self.dao.create(genre_d)
+
+    def update(self, genre_d):
+        self.dao.update(genre_d)
+        return self.dao
+
+    def delete(self, rid):
+        self.dao.delete(rid)

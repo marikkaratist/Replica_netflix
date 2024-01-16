@@ -30,3 +30,39 @@ class BaseDAO(Generic[T]):
             except NotFound:
                 return []
         return stmt.all()
+
+    def get_by_director_id(self, val):
+        return self._db_session.query(self.__model__.director_id == val).all()
+
+    def get_by_genre_id(self, val):
+        return self._db_session.query(self.__model__.genre_id == val).all()
+
+    def get_by_year(self, val):
+        return self._db_session.query(self.__model__.year == val).all()
+
+    def create(self, stmt_d):
+        stmt = Genre(**stmt_d)
+        self.session.add(stmt)
+        self.session.commit()
+        return ent
+
+    def delete(self, pk: int) -> Optional[T]:
+        stmt = self.get_by_id(pk)
+        self.session.delete(stmt)
+        self.session.commit()
+
+    def update(self, stmt_d):
+        stmt = self.get_one(stmt_d.get("id"))
+        stmt.name = stmt_d.get("name")
+        stmt.title = stmt_d.get("title")
+        stmt.description = stmt_d.get("description")
+        stmt.trailer = stmt_d.get("trailer")
+        stmt.year = stmt_d.get("year")
+        stmt.rating = stmt_d.get("rating")
+        stmt.genre_id = stmt_d.get("genre_id")
+        stmt.director_id = stmt_d.get("director_id")
+        stmt.email = stmt_d.get("email")
+        stmt.password = stmt_d.get("password")
+
+        self.session.add(stmt)
+        self.session.commit()
